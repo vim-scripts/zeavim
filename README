@@ -1,0 +1,24 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4957
+
+Zeavim allows to use Zeal(http://zealdocs.org) documentation browser directly from Vim.
+
+This plugin was tested in GNU/Linux and Windows.
+
+You'll find the last version on https://github.com/KabbAmine/zeavim.vim
+
+usage
+=====
+1.  <leader>z (NORMAL mode)
+    To execute Zeal with the current word as a keyword and the file type (Or file extension some times) as a docset.
+
+2.  <leader>z (VISUAL mode)
+    To execute Zeal with the current visual selection as a keyword and the file type (Or file extension some times) as a docset.
+
+3.  <leader>Z (Note the capital z)
+    To use the file type as a docset and specify the keyword manually.
+
+4.  <leader><leader>z
+    To specify manually both keyword and docset.
+
+Please refer to the documentation(https://github.com/KabbAmine/zeavim.vim/blob/master/doc/zeavim.txt)  or the README file(https://github.com/KabbAmine/zeavim.vim/blob/master/README.md) for more informations and how to configure zeavim.
+
