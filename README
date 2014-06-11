@@ -1,10 +1,11 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=4957
 
 Zeavim allows to use Zeal(http://zealdocs.org) documentation browser directly from Vim.
-
 This plugin was tested in GNU/Linux and Windows.
 
 You'll find the last version on https://github.com/KabbAmine/zeavim.vim
+
+Don't forget to rate it if you find it useful ( Or useless ;) ).
 
 usage
 =====

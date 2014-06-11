@@ -8,6 +8,8 @@ Zeavim allows to use [Zeal](http://zealdocs.org) documentation browser directly 
 
 This plugin was tested in GNU/Linux and Windows.
 
+You can find this README in [french](.various/README-fr.md).
+
 
 Installation
 -------------
