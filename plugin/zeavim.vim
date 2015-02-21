@@ -1,8 +1,9 @@
 " Global plugin that allows executing Zeal from Vim.
-" Creation	  : 2014-04-14
-" Last Change : 2014-12-04
+" Version     : 1.3
+" Creation    : 2014-04-14
+" Last Change : 2015-02-21
 " Maintainer  : Kabbaj Amine <amine.kabb@gmail.com>
-" License	  : This file is placed in the public domain.
+" License     : This file is placed in the public domain.
 
 
 if exists("g:zeavim_loaded")
@@ -21,32 +22,38 @@ set cpoptions&vim
 " =====================================================================
 
 " {
+" <Plug> names.
+let s:zeavimPlugs = ['Zeavim', 'ZVKeyword' , 'ZVKeyDocset']
+
 if !exists('g:zv_disable_mapping')
 
-	if !hasmapto('<Plug>Zeavim')
-		nmap <unique> <Leader>z  <Plug>Zeavim
-	endif
+	" Default mappings.
+	let s:zeavimKeys  = ['<Leader>z' , '<Leader>Z' , '<Leader><Leader>z']
+
+	for s:n in range(0, len(s:zeavimPlugs) - 1)
+		if !hasmapto(s:zeavimPlugs[s:n])
+			exec "nmap <unique> ".s:zeavimKeys[s:n]." <Plug>".s:zeavimPlugs[s:n]
+		endif
+	endfor
+	exec "vmap <unique> ".s:zeavimKeys[0]." <Plug>ZVVisSelection"
+
+endif
+
+" Map the <Plug>s with the appropriate <SID>s.
+if hasmapto('<Plug>Zeavim')
 	nnoremap <unique> <script> <Plug>Zeavim <SID>Zeavim
 	nnoremap <silent> <SID>Zeavim  :call <SID>Zeavim("<cword>")<CR>
-
-	if !hasmapto('<Plug>ZVKeyCall')
-		nmap  <unique> <Leader>Z  <Plug>ZVKeyword
+endif
+for s:p in s:zeavimPlugs[1:]
+	let s:plug = "<Plug>".s:p
+	if hasmapto(s:plug)
+		exec "nnoremap <unique> <script> <Plug>".s:p." <SID>".s:p
+		exec "nnoremap <silent> <SID>".s:p." :call <SID>".s:p."()<CR>"
 	endif
-	nnoremap <unique> <script> <Plug>ZVKeyword <SID>ZVKeyword
-	nnoremap <silent> <SID>ZVKeyword  :call <SID>ZVKeyword()<CR>
-
-	if !hasmapto('<Plug>ZVKeyDoc')
-		nmap <unique> <Leader><leader>z  <Plug>ZVKeyDocset
-	endif
-	nnoremap <unique> <script> <Plug>ZVKeyDocset <SID>ZVKeyDocset
-	nnoremap <silent> <SID>ZVKeyDocset  :call <SID>ZVKeyDocset()<CR>
-
-	if !hasmapto('<Plug>ZVVisSelection')
-		vmap <unique> <Leader>z  <Plug>ZVVisSelection
-	endif
+endfor
+if hasmapto('<Plug>ZVVisSelection')
 	vnoremap <unique> <script> <Plug>ZVVisSelection <SID>ZVVisSelection
 	vnoremap <silent> <SID>ZVVisSelection  :call <SID>ZVVisSelection()<CR>
-
 endif
 " }
 
@@ -224,7 +231,7 @@ function s:ExecuteZeal(docsetName, selection)
 	" Execute Zeal with the docset and selection passed in the arguments.
 
 	if (a:docsetName != "")
-		let s:executeZeal = "silent :".s:zealExecCmd." --query '".s:docsetName.":".a:selection."'"
+		let s:executeZeal = "silent :".s:zealExecCmd." --query '".a:docsetName.":".a:selection."'"
 	elseif (a:selection != "")
 		let s:executeZeal = "silent :".s:zealExecCmd." --query '".a:selection."'"
 	else

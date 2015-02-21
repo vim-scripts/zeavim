@@ -12,6 +12,7 @@ zeavim-mapping:custom	zeavim.txt	/*zeavim-mapping:custom*
 zeavim-mapping:default	zeavim.txt	/*zeavim-mapping:default*
 zeavim-notes	zeavim.txt	/*zeavim-notes*
 zeavim-settings	zeavim.txt	/*zeavim-settings*
+zeavim-settings:docset-completion	zeavim.txt	/*zeavim-settings:docset-completion*
 zeavim-settings:location	zeavim.txt	/*zeavim-settings:location*
 zeavim-settings:new-types	zeavim.txt	/*zeavim-settings:new-types*
 zeavim-settings:no-mapping	zeavim.txt	/*zeavim-settings:no-mapping*
