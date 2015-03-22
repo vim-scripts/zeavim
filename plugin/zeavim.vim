@@ -1,11 +1,12 @@
 " Global plugin that allows executing Zeal from Vim.
-" Version     : 1.3
+" Version     : 1.4
 " Creation    : 2014-04-14
-" Last Change : 2015-02-21
+" Last Change : 2015-03-14
 " Maintainer  : Kabbaj Amine <amine.kabb@gmail.com>
 " License     : This file is placed in the public domain.
 
 
+" Vim options {{{1
 if exists("g:zeavim_loaded")
 	finish
 endif
@@ -16,12 +17,13 @@ let s:saveFileFormat = &fileformat
 let s:saveCpoptions = &cpoptions
 set fileformat=unix
 set cpoptions&vim
+" }}}
 
 
 " MAPPINGS
 " =====================================================================
 
-" {
+" {{{1
 " <Plug> names.
 let s:zeavimPlugs = ['Zeavim', 'ZVKeyword' , 'ZVKeyDocset']
 
@@ -55,25 +57,23 @@ if hasmapto('<Plug>ZVVisSelection')
 	vnoremap <unique> <script> <Plug>ZVVisSelection <SID>ZVVisSelection
 	vnoremap <silent> <SID>ZVVisSelection  :call <SID>ZVVisSelection()<CR>
 endif
-" }
-
+" }}}
 
 " COMMANDS
 " =====================================================================
-" {
+
+" {{{1
 command! Zeavim call s:Zeavim("<cword>")
 command! ZvK call s:ZVKeyword()
 command! ZvKD call s:ZVKeyDocset()
 command! -range ZvV call s:ZVVisSelection()
-command! -complete=custom,s:SetDocsetName -nargs=? Docset :let b:manualDocset = '<args>'
-" }
-
+command! -complete=custom,CompleteDocsetName -nargs=? Docset :let b:manualDocset = '<args>'
+" }}}
 
 " VARIABLES
 " =====================================================================
 
-" {
-" Set Zeal's Location
+" Set Zeal's Location {{{1
 	if !exists('g:zv_zeal_directory')
 		if has('win32') || has('win64')
 			let g:zv_zeal_directory = $ProgramFiles."/Zeal/zeal.exe"
@@ -81,46 +81,37 @@ command! -complete=custom,s:SetDocsetName -nargs=? Docset :let b:manualDocset = 
 			let g:zv_zeal_directory = "/usr/bin/zeal"
 		endif
 	endif
-" Set Zeal's execution command
+" Set Zeal's execution command {{{1
 	if has('win32') || has('win64')
 		let s:zealExecCmd = "!start \"".g:zv_zeal_directory."\""
 	else
 		let s:zealExecCmd = "! ".g:zv_zeal_directory.""
 	endif
-" A dictionary who contains the docset names of some file extensions
+" A dictionary who contains the docset names of some file extensions {{{1
 	let s:zeavimDocsetNames = {
-				\ 'c': 'C',
 				\ 'cpp': 'C++',
-				\ 'css': 'Css',
-				\ 'html': 'Html',
-				\ 'java': 'Java',
 				\ 'js': 'Javascript',
-				\ 'markdown': 'Markdown',
 				\ 'md': 'Markdown',
 				\ 'mdown': 'Markdown',
 				\ 'mkd': 'Markdown',
 				\ 'mkdn': 'Markdown',
-				\ 'php': 'Php',
 				\ 'py': 'Python',
 				\ 'scss': 'Sass',
 				\ 'sh': 'Bash',
 				\ 'tex': 'Latex',
 				\ }
-" Add the external docset names from a global variable
+" Add external docset names from a global variable {{{1
 	if exists("g:zv_added_files_type")
-		call extend(s:zeavimDocsetNames, g:zv_added_files_type, "error")
-	else
-		let g:zv_added_files_type = {}
+		call extend(s:zeavimDocsetNames, g:zv_added_files_type)
 	endif
-" }
-
+" }}}
 
 " FUNCTIONS
 " =====================================================================
 
 " General functions
 " ************************
-function s:ShowMessage(messageTypeNumber, messageContent)
+function s:ShowMessage(messageTypeNumber, messageContent) " {{{1
 	" Show a message according to his highlighting type.
 	"	1- White (Normal).
 	"	2- Red (Warning).
@@ -142,7 +133,7 @@ function s:ShowMessage(messageTypeNumber, messageContent)
 	echohl None
 
 endfunction
-function s:Make1stLetterUpperCase(string)
+function s:Make1stLetterUpperCase(string) " {{{1
 	" Make the 1st letter of a string in uppercase.
 
 	if !empty(a:string)
@@ -151,7 +142,7 @@ function s:Make1stLetterUpperCase(string)
 	endif
 
 endfunction
-function s:GetVisualSelection()
+function s:GetVisualSelection() " {{{1
 	" Return the visual selection.
 
 	let s:selection=getline("'<")
@@ -162,37 +153,38 @@ function s:GetVisualSelection()
 	return s:selection[col1 - 1: col2 - 1]
 
 endfunction
-function s:SetDocsetName(A, L, P)
-	" Return a list (Strings separated by \n) of docset names for
-	" command completion.
+function CompleteDocsetName(A, L, P) " {{{1
+	" Return a list (Strings separated by \n) of docset names.
 
 	let s:docsetList = values(s:zeavimDocsetNames)
+	if exists("g:zv_docsets_dir")
+		call extend(s:docsetList, s:GetDocsetNameFromDir(g:zv_docsets_dir))
+	endif
 	if exists("g:zv_lazy_docset_list")
 		call extend(s:docsetList, g:zv_lazy_docset_list)
-	end
+	endif
 	" Remove duplicates (http://stackoverflow.com/questions/6630860/remove-duplicates-from-a-list-in-vim)
-	let s:docsetListClean =filter(copy(s:docsetList), 'index(s:docsetList, v:val, v:key+1)==-1')
+	let s:docsetListClean = filter(copy(s:docsetList), 'index(s:docsetList, v:val, v:key+1)==-1')
 	return join(sort(s:docsetListClean), "\n")."\n"
 
 endfunction
+" }}}
 
 " Processing functions
 " ************************
-function s:CheckZeal()
+function s:CheckZeal() " {{{1
 	" Check if the Zeal's executable is present according to the global
 	" variable zv_zeal_directory and return 0 if not
 
 	if !executable(g:zv_zeal_directory)
 		call s:ShowMessage(4, "Zeal is not present in your system or his location is not defined")
-		" sleep 1
-		" execute "normal \<C-l>"
 		return 0
 	else
 		return 1
 	endif
 
 endfunction
-function s:GetDocsetNameFromTheList(fileExtension, fileType)
+function s:GetDocsetNameFromList(fileExtension, fileType) " {{{1
 	" Get and return the doscset name if the extension file is present
 	" on the variable 'zeavimDocsetNames'.
 
@@ -208,7 +200,19 @@ function s:GetDocsetNameFromTheList(fileExtension, fileType)
 	return s:docsetName
 
 endfunction
-function s:GetDocsetName()
+function s:GetDocsetNameFromDir(directory) " {{{1
+	" Get docset names from zeal docset directory.
+
+	let l:docsetList = glob(a:directory . '*.docset', 0, 1)
+	for l:index in range(0, len(l:docsetList) - 1)
+		let l:docsetList[l:index] = substitute(l:docsetList[l:index], '^.*\(/\|\\\)\([A-Za-z0-9_]\+\)\.docset$', '\2', 'g')
+		let l:docsetList[l:index] = substitute(l:docsetList[l:index], '_', ' ', 'g')
+		let l:docsetList[l:index] = s:Make1stLetterUpperCase(l:docsetList[l:index])
+	endfor
+	return l:docsetList
+
+endfunction
+function s:GetDocsetName() " {{{1
 	"  Get and return the appropriate docset name.
 
 	let s:fileExtension = expand("%:e")
@@ -217,7 +221,7 @@ function s:GetDocsetName()
 	if exists('b:manualDocset') && !empty(b:manualDocset)
 		let s:docsetName = b:manualDocset
 	elseif (s:fileType != '') || (s:fileExtension != '')
-		let s:docsetName = s:GetDocsetNameFromTheList(s:fileExtension, s:fileType)
+		let s:docsetName = s:GetDocsetNameFromList(s:fileExtension, s:fileType)
 	else
 		call s:ShowMessage(2, "No file type found")
 		let s:docsetName = ""
@@ -227,13 +231,13 @@ function s:GetDocsetName()
 	return s:docsetName
 
 endfunction
-function s:ExecuteZeal(docsetName, selection)
+function s:ExecuteZeal(docsetName, selection) " {{{1
 	" Execute Zeal with the docset and selection passed in the arguments.
 
 	if (a:docsetName != "")
-		let s:executeZeal = "silent :".s:zealExecCmd." --query '".a:docsetName.":".a:selection."'"
+		let s:executeZeal = "silent :".s:zealExecCmd." --query \"".a:docsetName.":".a:selection."\""
 	elseif (a:selection != "")
-		let s:executeZeal = "silent :".s:zealExecCmd." --query '".a:selection."'"
+		let s:executeZeal = "silent :".s:zealExecCmd." --query \"".a:selection."\""
 	else
 		let s:executeZeal = "silent :".s:zealExecCmd.""
 	endif
@@ -246,10 +250,11 @@ function s:ExecuteZeal(docsetName, selection)
 	redraw!
 
 endfunction
+" }}}
 
 " Main functions.
 " ************************
-function s:Zeavim(selection)
+function s:Zeavim(selection) " {{{1
 	" Call Zeal normally with the argument 'selection' as a keyword.
 
 	if s:CheckZeal() == 1
@@ -262,7 +267,7 @@ function s:Zeavim(selection)
 	endif
 
 endfunction
-function s:ZVKeyword()
+function s:ZVKeyword() " {{{1
 	" Give a keyword as an input from Vim and call Zeal.
 
 	if s:CheckZeal() == 1
@@ -280,11 +285,13 @@ function s:ZVKeyword()
 	endif
 
 endfunction
-function s:ZVKeyDocset()
+function s:ZVKeyDocset() " {{{1
 	" Give the keyword and the docset manually.
 
 	if s:CheckZeal() == 1
-		let s:docsetName = input("Docset: ")
+		let s:docsetName = input("Docset: ", "", "custom,CompleteDocsetName")
+		redraw!
+		call s:ShowMessage(4, "Zeal (".s:docsetName.")")
 		let s:keywordInput = input("Search for: ")
 
 		if (s:docsetName == '') && (s:keywordInput == '')
@@ -296,7 +303,7 @@ function s:ZVKeyDocset()
 	endif
 
 endfunction
-function s:ZVVisSelection()
+function s:ZVVisSelection() " {{{1
 	" Call Zeal with the current visual selection.
 
 	if s:CheckZeal() == 1
@@ -309,7 +316,13 @@ function s:ZVVisSelection()
 	endif
 
 endfunction
+" }}}
 
+
+" Restore default vim options {{{1
 let &cpoptions = s:saveCpoptions
 unlet s:saveCpoptions
 let &fileformat = s:saveFileFormat
+" }}}
+
+" vim:ft=vim:fdm=marker:fmr={{{,}}}:

@@ -5,8 +5,7 @@ zeavim-contents	zeavim.txt	/*zeavim-contents*
 zeavim-description	zeavim.txt	/*zeavim-description*
 zeavim-installation	zeavim.txt	/*zeavim-installation*
 zeavim-installation:manual	zeavim.txt	/*zeavim-installation:manual*
-zeavim-installation:pathogen	zeavim.txt	/*zeavim-installation:pathogen*
-zeavim-installation:vundle	zeavim.txt	/*zeavim-installation:vundle*
+zeavim-installation:plugin-manager	zeavim.txt	/*zeavim-installation:plugin-manager*
 zeavim-mapping	zeavim.txt	/*zeavim-mapping*
 zeavim-mapping:custom	zeavim.txt	/*zeavim-mapping:custom*
 zeavim-mapping:default	zeavim.txt	/*zeavim-mapping:default*
