@@ -1,10 +1,19 @@
 This is a mirror of http://www.vim.org/scripts/script.php?script_id=4957
 
-Zeavim allows to use Zeal(http://zealdocs.org) documentation browser directly from Vim.
-This plugin was tested in GNU/Linux and Windows.
+Zeavim allows to use the offline documentation browser Zeal(http://zealdocs.org) from Vim.
+
+# Features:
+    * Search word under cursor or a visual selection.
+    * Search without losing focus from Vim if Zeal is already opened (Need wmctrl on UNIX).
+    * Possibility to specify dynamically a docset.
+    * Narrow search with a query.
+    * Allows using multiple docsets.
+    * Docset name completion.
+    * Define you own docsets using file types, extentions or regex.
+    * Supports docsets specific to file names (e.g gulpfile.js)
+    * Works on GNU/Linux and Windows.
 
 You'll find the last version on https://github.com/KabbAmine/zeavim.vim
-
 Don't forget to rate it if you find it useful ( Or useless ;) ).
 
 usage
@@ -15,10 +24,7 @@ usage
 2.  <leader>z (VISUAL mode)
     To execute Zeal with the current visual selection as a keyword and the file type (Or file extension some times) as a docset.
 
-3.  <leader>Z (Note the capital z)
-    To use the file type as a docset and specify the keyword manually.
-
-4.  <leader><leader>z
+3.  <leader><leader>z
     To specify manually both keyword and docset.
 
 Please refer to the documentation(https://github.com/KabbAmine/zeavim.vim/blob/master/doc/zeavim.txt)  or the README file(https://github.com/KabbAmine/zeavim.vim/blob/master/README.md) for more informations and how to configure zeavim.
